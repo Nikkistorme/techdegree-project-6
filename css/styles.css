@@ -12,7 +12,7 @@
   --color-keys: #37474F;
   --color-keys-light: #E5E5E5;
   --font-size-large: 60px;
-  --font-size-medium: 20px;
+  --font-size-medium: 25px;
   --transition: all .2s ease-in-out;
 }
 
@@ -27,6 +27,7 @@ body {
   flex-direction: column;
   display: flex;
   height: 100vh;
+  background-color: #F8F8FF;
 }
 
 li, ol, ul {
@@ -96,6 +97,15 @@ button {
 .show {
   color: #000;
   background-color: #76CE82;
+  animation: wiggle .5s 1;
+}
+
+@keyframes wiggle {
+  0% {transform: rotate(5deg);}
+  25% {transform: rotate(-5deg);}
+  50% {transform: rotate(10deg);}
+  75% {transform: rotate(-5deg);}
+  100% {transform: rotate(0deg);}
 }
 
 /* Keyboard */
@@ -113,11 +123,16 @@ button {
 }
 
 .btn__reset {
-  padding: 8px;
+  padding: 10px;
   margin: 50px auto;
   background: #FFFFFF;
   border-radius: 5px;
   font-size: var(--font-size-medium);
+  transition: box-shadow .5s;
+}
+
+.btn__reset:hover {
+  box-shadow: 7px 7px 2px rgba(0, 0, 0, 0.15);
 }
 
 /* Overlay */
