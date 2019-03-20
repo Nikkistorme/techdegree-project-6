@@ -17,19 +17,19 @@ let missed = 0; //number of incorrect guesses
 let letterFound = null; // null is default value for letter found by checkLetter
 
 // HIDE OVERLAY TO BEGIN OR RESET GAME ON CLICK OF START BUTTON
-startButton.addEventListener('click', (e) => {
-  missed = 0;
-  for (i = 0; i < tries.length; i += 1) {
-    tries[i].firstChild.src = 'images/liveHeart.png';
+startButton.addEventListener('click', (e) => { // listen for clicks on start button
+  missed = 0; // reset missed counter
+  for (i = 0; i < tries.length; i += 1) { // loop through hearts
+    tries[i].firstChild.src = 'images/liveHeart.png'; // replenish hearts
   }
-  const buttons = qwerty.getElementsByTagName('button');
-  for (i = 0; i < buttons.length; i += 1) {
-    buttons[i].className = '';
-    buttons[i].disabled = false;
+  const buttons = qwerty.getElementsByTagName('button'); // retrieve all buttons
+  for (i = 0; i < buttons.length; i += 1) { // loop through all buttons
+    buttons[i].className = ''; // remove .show
+    buttons[i].disabled = false; // remove disabled state
   }
-  overlay.style.display = 'none';
-  phraseUL.innerHTML = '';
-  addPhraseToDisplay(getRandomPhraseAsArray(phrases));
+  overlay.style.display = 'none'; // hide overlay
+  phraseUL.innerHTML = ''; // remove previous phrase
+  addPhraseToDisplay(getRandomPhraseAsArray(phrases)); //add new phrase
 });
 
 // SEARCH THROUGH AN ARRAY FOR ITEM, RETURN TRUE OR FALSE
@@ -39,9 +39,9 @@ function contains(src, test) {
 
 // INPUT AN ARRAY AND RETURN A STRING OF A RANDOM PHRASE FROM THAT ARRAY
 function getRandomPhraseAsArray(arr) {
-  const randomPhrase = arr[Math.floor(Math.random() * arr.length)];
-  const randomPhraseArray = randomPhrase.split('');
-  return randomPhraseArray;
+  const randomPhrase = arr[Math.floor(Math.random() * arr.length)]; // store random item from phrases
+  const randomPhraseArray = randomPhrase.split(''); // turn that phrase into an array of individual letters
+  return randomPhraseArray; // return array of letters
 }
 
 // ITERATE THROUGH PHRASE LETTERS, AND DISPLAY THEM ON DOM
@@ -79,7 +79,7 @@ function checkLetter(keyPress) {
   return letterFound; // return value of letterFound (found letter or null)
 }
 
-// WHAT HAPPENS WHEN LETTER IS CHOSEN TO BE GUESSED
+// WHAT HAPPENS WHEN LETTER IS CHOSEN ON SCREEN TO BE GUESSED
 qwerty.addEventListener('click', (e) => { // listen for click
   if (e.target.tagName === 'BUTTON') { // only button presses work
     const button = e.target; // e.target = the pressed button
@@ -92,6 +92,29 @@ qwerty.addEventListener('click', (e) => { // listen for click
       tries[tries.length - missed].firstChild.src = 'images/lostHeart.png'; // lose a heart
     }
     checkWin(); // check if game is over
+  }
+});
+
+// WHAT HAPPENS WHEN LETTER IS PRESSED ON KEYBOARD TO BE GUESSED
+document.addEventListener('keydown', (e) => { // listen for keypress
+  const keyCode = e.keyCode; // store keycode
+  const key = e.key.toString(); // store key value and make it a string
+  const buttonsObject = qwerty.getElementsByTagName('button'); // retrieve the buttons on qwerty
+  const buttonsArray = Array.from(buttonsObject); // make it into an array
+  const keyboardButtonsArray = buttonsArray.map(a => a.textContent) // make an array of JUST the letters
+  if (keyCode >= 65 && keyCode <= 90) { // if the key pressed is a letter
+    for (i = 0; i < keyboardButtonsArray.length; i += 1) { // loop through all letters on keyboard
+      if (contains(keyboardButtonsArray[i], key)) { // if the pressed key is on the keyboard,
+        buttonsArray[i].className = 'chosen'; // add chosen class
+        buttonsArray[i].disabled = true; // disable
+      }
+    }
+    checkLetter(key); // check if letter is in phrase
+    if (letterFound === null) { // if letter is not in phrase
+      missed += 1; // update missed count
+      tries[tries.length - missed].firstChild.src = 'images/lostHeart.png'; // lose a heart
+    }
+    checkWin(); // check for end of game
   }
 });
 
